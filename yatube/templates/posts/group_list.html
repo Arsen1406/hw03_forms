@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}
+  Записи сообщества {{ group.title }}
+{% endblock %}
+{% block content %}
+  <h1>Записи сообщества {{ group }}</h1>
+  {% for post in page_obj %}
+  <ul>
+  <li>
+    Автор: {{ post.author.get_full_name }}
+  </li>
+  <li>
+    Дата публикации: {{ post.pub_date|date:"d E Y" }}
+  </li>
+  </ul>
+  <p>{{ post.text }}</p>
+  {% if not forloop.last %}<hr>{% endif %}
+  <a href="{% url 'posts:post_detail' post.id %}">читать</a><br>
+  {% if post.group %}
+  {% if user == post.author %}
+  <a href="{% url 'posts:edit' post.id %}">редактировать пост</a><br>
+  {% endif %}
+  <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
+  {% endif %}<br>
+  <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a><br>
+  {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+  <a href="{% url 'posts:index' %}">Вернуться на главную страницу</a>
+{% endblock %}
