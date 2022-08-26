@@ -11,7 +11,7 @@
       {% if post.group %}
       <li class="list-group-item">
         Группа: {{ post.group }}<br>
-        <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
+        <a href="{% url 'posts:group' post.group.slug %}">все записи группы</a>
           {% endif %}
         </a>
       </li>

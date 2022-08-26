@@ -16,7 +16,7 @@
         <a href="{% url 'posts:edit' post.id %}">редактировать пост</a><br>
       {% endif %}
       {% if post.group %}
-      <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
+      <a href="{% url 'posts:group' post.group.slug %}">все записи группы</a>
       {% endif %}<br>
       <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
     <hr>
@@ -33,7 +33,7 @@
       {{ post }}
     </p>
       {% if post.group %}
-    <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
+    <a href="{% url 'posts:group' post.group.slug %}">все записи группы</a>
     {% endif %}<br>
     <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
     <hr>
