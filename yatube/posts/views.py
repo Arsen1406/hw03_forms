@@ -8,11 +8,13 @@ from .forms import PostForm
 
 COUNT_PAGE = 10
 
+
 def paginator_func(request, post_list, count_page):
     pag = Paginator(post_list, count_page)
     page_number = request.GET.get('page')
     paginator = pag.get_page(page_number)
     return paginator
+
 
 def index(request):
     main = "Последние обновления на сайте"
