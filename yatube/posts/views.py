@@ -67,12 +67,13 @@ def post_detail(request, post_id):
     template = 'posts/post_detail.html'
     return render(request, template, context)
 
+
 @login_required
 def post_create(request):
     is_edit = False
     group = Group.objects.all()
     user = request.user
-    main = f'Создать пост от имени'
+    main = 'Создать пост от имени'
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -124,4 +125,3 @@ def post_edit(request, post_id):
     }
     template = 'posts/create_post.html'
     return render(request, template, context)
-
