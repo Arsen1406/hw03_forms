@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-  {{ group.title }}
+  Записи сообщества: {{ group.title }} - {{ group.description }}
 {% endblock %}
 {% block content %}
-  <h1>Записи сообщества {{ group }}</h1>
+  <h1>{{ group.title }}</h1>
+  <p>{{ group.description }}</p>
   {% for post in page_obj %}
   <ul>
   <li>
