@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
-  {{ main }}
+  {{ main }} {{ user.get_full_name }}
 {% endblock %}
 {% block content %}
     <main>

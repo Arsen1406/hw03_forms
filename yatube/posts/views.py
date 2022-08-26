@@ -1,8 +1,10 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.utils import timezone
 from .models import Post, Group, User
-from .form import PostForm
+from .forms import PostForm
 
 
 def index(request):
@@ -65,26 +67,27 @@ def post_detail(request, post_id):
     template = 'posts/post_detail.html'
     return render(request, template, context)
 
-
+@login_required
 def post_create(request):
-    main = 'Создать пост'
     is_edit = False
     group = Group.objects.all()
-    title = request.user.username
+    user = request.user
+    main = f'Создать пост от имени'
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            post.pub_date = timezone.now()
             post.save()
-            return HttpResponseRedirect(f'/profile/{title}')
+            return HttpResponseRedirect(f'/profile/{user.username}/')
     else:
         form = PostForm()
 
     context = {
         'main': main,
+        'user': user,
         'is_edit': is_edit,
-        'title': title,
         'group': group,
         'form': form
     }
@@ -92,6 +95,7 @@ def post_create(request):
     return render(request, template, context)
 
 
+@login_required
 def post_edit(request, post_id):
     group = Group.objects.all()
     post = get_object_or_404(Post, pk=post_id)
@@ -104,6 +108,7 @@ def post_edit(request, post_id):
             if form.is_valid():
                 post = form.save(commit=False)
                 post.author = request.user
+                post.pub_date = timezone.now()
                 post.save()
                 return HttpResponseRedirect(f'/posts/{post_id}')
             else:
