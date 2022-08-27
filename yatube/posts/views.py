@@ -1,25 +1,16 @@
-from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.utils import timezone
 from .models import Post, Group, User
 from .forms import PostForm
-
-COUNT_PAGE = 10
-
-
-def paginator_func(request, post_list, count_page):
-    pag = Paginator(post_list, count_page)
-    page_number = request.GET.get('page')
-    paginator = pag.get_page(page_number)
-    return paginator
+from .ulits import get_paginated_post
 
 
 def index(request):
     main = "Последние обновления на сайте"
     post_list = Post.objects.order_by('-pub_date')
-    page_obj = paginator_func(request, post_list, COUNT_PAGE)
+    page_obj = get_paginated_post(request, post_list)
     context = {
         'page_obj': page_obj,
         'main': main
@@ -31,7 +22,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = Post.objects.filter(group=group).order_by('-pub_date')
-    page_obj = paginator_func(request, posts, COUNT_PAGE)
+    page_obj = get_paginated_post(request, posts)
     context = {
         'page_obj': page_obj,
         'group': group,
@@ -46,7 +37,7 @@ def profile(request, username):
     posts = Post.objects.filter(author=author).order_by('-pub_date')
     count = Post.objects.filter(author=author).aggregate(Count('pk'))
     posts_other = Post.objects.exclude(author=author)
-    page_obj = paginator_func(request, posts, COUNT_PAGE)
+    page_obj = get_paginated_post(request, posts)
     context = {
         'page_obj': page_obj,
         'posts_other': posts_other,
@@ -80,9 +71,8 @@ def post_create(request):
     if form.is_valid():
         post = form.save(commit=False)
         post.author = request.user
-        post.pub_date = timezone.now()
         post.save()
-        return HttpResponseRedirect(f'/profile/{user.username}/')
+        return redirect('posts:profile', username=user.username)
 
     context = {
         'main': main,
@@ -108,11 +98,11 @@ def post_edit(request, post_id):
             post.author = request.user
             post.pub_date = timezone.now()
             post.save()
-            return HttpResponseRedirect(f'/posts/{post_id}')
+            return redirect('posts:post_detail', post_id=post_id)
         else:
             form = PostForm(instance=post)
     else:
-        return HttpResponseRedirect(f'/posts/{post_id}')
+        return redirect('posts:post_detail', post_id=post_id)
     context = {
         'group_set': group_set,
         'group': group,
