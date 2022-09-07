@@ -43,7 +43,7 @@ class PostURLTest(TestCase):
                     f'Проблема с отображением страницы {address}'
                 )
 
-    def test_urls_uses_correct_template_autorize(self):
+    def test_urls_uses_correct_template_autorized(self):
         post_id = Post.objects.get(text='Тестовый текст')
         templates_url_names = {
             f'/posts/{post_id.id}/': 'post/post_detal.html',
